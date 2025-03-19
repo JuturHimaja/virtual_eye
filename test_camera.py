@@ -1,13 +1,18 @@
 import cv2
 
 def test_camera(index):
-    cap = cv2.VideoCapture(index)
-    
+    # Force OpenCV to use AVFoundation (Best for macOS)
+    cap = cv2.VideoCapture(index, cv2.CAP_AVFOUNDATION)
+
     if not cap.isOpened():
         print(f"❌ Camera at index {index} failed to initialize.")
         return
 
     print(f"✅ Camera at index {index} is working")
+
+    # Set camera resolution (common fix for MacBook camera issues)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
     while True:
         ret, frame = cap.read()
@@ -28,5 +33,4 @@ def test_camera(index):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    # Test index 1 directly since that's your working camera
-    test_camera(1)
+    test_camera(1)  # Testing index 1 directly
