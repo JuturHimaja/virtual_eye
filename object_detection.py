@@ -6,7 +6,7 @@ from ultralytics import YOLO
 logging.getLogger("ultralytics").setLevel(logging.ERROR)
 
 model = YOLO("yolov8n.pt")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 while True:
     ret, frame = cap.read()
