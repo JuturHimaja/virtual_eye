@@ -1,6 +1,7 @@
 import cv2
 import logging
 import keyboard
+import time  # Added for camera delay
 from ultralytics import YOLO
 
 logging.getLogger("ultralytics").setLevel(logging.ERROR)
@@ -10,9 +11,13 @@ model = YOLO("yolov8n.pt")
 # Correct camera index and backend for macOS
 cap = cv2.VideoCapture(1, cv2.CAP_AVFOUNDATION)
 
-# Set resolution (optional but recommended for stability)
+# Stabilization delay
+time.sleep(2)
+
+# Set resolution and buffer limit (important for stability)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 while True:
     ret, frame = cap.read()
@@ -20,7 +25,12 @@ while True:
         print("❌ Failed to grab frame. Check camera index or connection.")
         break
 
-    results = model(frame)
+    # HSV Conversion for color detection
+    frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # RGB Conversion for YOLO detection
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = model(frame_rgb)
 
     if keyboard.is_pressed(" "):
         print("\nObjects in Frame:")
@@ -33,6 +43,9 @@ while True:
 
     frame_annotated = results[0].plot()
     cv2.imshow("Object Detection", frame_annotated)
+
+    # Show the HSV frame if required for color detection
+    # cv2.imshow("HSV Frame", frame_hsv)
 
     if keyboard.is_pressed("q"):
         break
