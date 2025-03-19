@@ -6,11 +6,18 @@ from ultralytics import YOLO
 logging.getLogger("ultralytics").setLevel(logging.ERROR)
 
 model = YOLO("yolov8n.pt")
-cap = cv2.VideoCapture(0)
+
+# Correct camera index and backend for macOS
+cap = cv2.VideoCapture(1, cv2.CAP_AVFOUNDATION)
+
+# Set resolution (optional but recommended for stability)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 while True:
     ret, frame = cap.read()
     if not ret:
+        print("❌ Failed to grab frame. Check camera index or connection.")
         break
 
     results = model(frame)
