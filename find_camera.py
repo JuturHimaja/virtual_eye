@@ -1,6 +1,6 @@
 import cv2
 
-for i in range(5):  # Check indices from 0 to 4
+for i in range(2):  # Check indices from 0 to 4
     cap = cv2.VideoCapture(i)
     if cap.isOpened():
         print(f"Camera found at index {i}")
